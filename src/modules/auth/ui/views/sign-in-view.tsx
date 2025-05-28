@@ -1,12 +1,14 @@
 "use client"
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OctagonAlert } from "lucide-react";
 import { useForm } from "react-hook-form";
+
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
@@ -14,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { authClient } from "@/lib/auth-client";
-
 
 
 const formSchema = z.object({
@@ -41,7 +42,29 @@ export const SignInView = () => {
         authClient.signIn.email(
             {
                 email: data.email,
-                password: data.password
+                password: data.password,
+                callbackURL: "/"
+            },
+            {
+                onSuccess: () => {
+                    setPending(false);
+                },
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message);
+                }
+            }
+        );
+    }
+
+    const onSocial = (provider: "google" | "github") => {
+        setError(null);
+        setPending(true);
+
+        authClient.signIn.social(
+            {
+                provider: provider,
+                callbackURL: "/"
             },
             {
                 onSuccess: () => {
@@ -55,6 +78,7 @@ export const SignInView = () => {
             }
         );
     }
+
 
     return (
         <div className="flex flex-col gap-6">
@@ -116,13 +140,21 @@ export const SignInView = () => {
                                     <span className="bg-card text-muted-foreground relative z-10 px-2">Or continue with</span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Button disabled={pending} variant="outline" className="w-full" type="button">
-                                        <img src="/google.svg" alt="Google Logo" className="h-4 w-4 mr-2" />
-                                        Google
+                                    <Button
+                                        disabled={pending}
+                                        onClick={() => onSocial("google")}
+                                        variant="outline"
+                                        className="w-full"
+                                        type="button">
+
+                                        <FaGoogle />
                                     </Button>
-                                    <Button disabled={pending} variant="outline" className="w-full" type="button">
-                                        <img src="/github.svg" alt="GitHub Logo" className="h-4 w-4 mr-2" />
-                                        GitHub
+                                    <Button disabled={pending} onClick={() => onSocial("github")}
+                                        variant="outline"
+                                        className="w-full"
+                                        type="button">
+
+                                        <FaGithub />
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm text-muted-foreground">
