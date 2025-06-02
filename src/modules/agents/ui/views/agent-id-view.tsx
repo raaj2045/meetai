@@ -9,7 +9,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useTRPC } from "@/trpc/client";
 import { Badge } from "@/components/ui/badge";
 import { GeneratedAvatar } from "@/components/generated-avatar";
-import { AgentIdViewHeader } from "./agent-id-view-header";
+import { AgentIdViewHeader } from "../components/agent-id-view-header";
 import { UpdateAgentDialog } from "../components/update-agent-dialog";
 
 interface Props {
